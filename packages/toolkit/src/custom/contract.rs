@@ -55,6 +55,15 @@ impl RawContract {
     }
 }
 
+impl From<Contract> for RawContract {
+    fn from(item: Contract) -> Self {
+        RawContract {
+            address: item.address.to_string(),
+            code_hash: item.code_hash,
+        }
+    }
+}
+
 impl From<ContractInfo> for RawContract {
     fn from(item: ContractInfo) -> Self {
         RawContract {
@@ -98,6 +107,15 @@ impl BorshDeserialize for Contract {
             address: Addr::unchecked(<String>::deserialize_reader(reader)?),
             code_hash: <String>::deserialize_reader(reader)?,
         })
+    }
+}
+
+impl From<RawContract> for Contract {
+    fn from(item: RawContract) -> Self {
+        Contract {
+            address: Addr::unchecked(item.address),
+            code_hash: item.code_hash,
+        }
     }
 }
 
