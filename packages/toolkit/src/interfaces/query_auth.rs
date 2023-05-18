@@ -5,6 +5,8 @@ use serde::de::DeserializeOwned;
 
 use crate::{InstantiateCallback, Contract, ExecuteCallback, ResponseStatus, Query};
 
+pub use query_authentication::*;
+
 #[cw_serde]
 pub struct InstantiateMsg {
     pub admin_auth: Contract,
