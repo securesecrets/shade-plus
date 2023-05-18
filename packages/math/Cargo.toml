@@ -1,0 +1,37 @@
+[package]
+name = "better-secret-math"
+version = "0.3.0"
+authors = ["hoomp"]
+edition = { workspace = true }
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bench]]
+name = "bench_main"
+harness = false
+
+[features]
+default = []
+arbitrary = ["ethnum/arbitrary"]
+macros = ["ethnum/macros"]
+
+[dependencies]
+cosmwasm-std = { workspace = true }
+cosmwasm-schema = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true }
+borsh = { workspace = true }
+thiserror = { workspace = true }
+ethnum = { workspace = true, features = ["cosmos", "borsh", "serde", "macros"] }
+primitive-types = { workspace = true }
+
+paste = { workspace = true }
+derive-from-ext = { workspace = true }
+btr-macros = { path = "../btr-macros" }
+
+[dev-dependencies]
+rstest = { workspace = true }
+criterion = { workspace = true }
+serde_json = { workspace = true }
+proptest = { workspace = true }

@@ -1,0 +1,11 @@
+pre-commit:
+  parallel: true
+  commands:
+    cargo-fmt:
+      glob: "*.{rs}"
+      run: cargo fmt && git add {staged_files}
+    toml-fmt:
+      glob: "*.{toml}"
+      run: taplo fmt {staged_files} && git add {staged_files}
+    test:
+      run: just test

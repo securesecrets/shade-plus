@@ -1,0 +1,42 @@
+[package]
+name = "secret-storage-plus"
+version = "0.13.4"
+authors = [
+  "Ethan Frey <ethanfrey@users.noreply.github.com>",
+
+  # Refactored for Secret Network
+  "hoomp3",
+]
+edition = { workspace = true }
+description = "Enhanced storage engines"
+license = "Apache-2.0"
+repository = "https://github.com/CosmWasm/cw-plus"
+homepage = "https://cosmwasm.com"
+
+[features]
+default = []
+iterator = ["cosmwasm-std/iterator"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+# See https://bheisler.github.io/criterion.rs/book/faq.html#cargo-bench-gives-unrecognized-option-errors-for-valid-command-line-options
+bench = false
+
+[dependencies]
+cosmwasm-std = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true }
+bincode2 = { workspace = true }
+
+[dev-dependencies]
+better-secret-math = { path = "../../math" }
+secret-borsh-storage = { path = "../borsh" }
+borsh = { workspace = true }
+criterion = { workspace = true }
+rstest = { workspace = true }
+rstest_reuse = { workspace = true }
+rand = { workspace = true }
+
+[[bench]]
+name = "main"
+harness = false

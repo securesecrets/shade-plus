@@ -1,0 +1,17 @@
+[package]
+name = "btr-macros"
+version = "0.1.0"
+authors = [
+   "hoomp <flammable.shower939@anonaddy.me>",
+   "Guy Garcia <guy.garcia@protonmail.com>",
+]
+edition = { workspace = true }
+
+[dependencies]
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
+syn = { workspace = true, features = ["derive", "full", "printing", "extra-traits"] }
+paste = { workspace = true }
+
+[lib]
+proc-macro = true
