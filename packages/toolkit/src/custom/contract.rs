@@ -101,6 +101,15 @@ impl Into<ContractInfo> for Contract {
     }
 }
 
+impl Default for Contract {
+    fn default() -> Self {
+        Contract {
+            address: Addr::unchecked(""),
+            code_hash: "".to_string(),
+        }
+    }
+}
+
 impl KeyDeserialize for &Contract {
     type Output = Addr;
 
