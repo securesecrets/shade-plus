@@ -72,9 +72,9 @@ pub trait InstantiateCallback: Serialize {
     /// * `send_amount` - Optional Uint128 amount of native coin to send with instantiation message
     fn to_cosmos_msg(
         &self,
-        label: String,
+        label: impl Into<String>,
         code_id: u64,
-        code_hash: String,
+        code_hash: impl Into<String>,
         funds: Vec<Coin>,
     ) -> StdResult<CosmosMsg> {
         let mut msg = to_binary(self)?;
@@ -87,9 +87,9 @@ pub trait InstantiateCallback: Serialize {
         space_pad(&mut msg.0, padding);
         let init = WasmMsg::Instantiate {
             code_id,
-            code_hash,
+            code_hash: code_hash.into(),
             msg,
-            label,
+            label: label.into(),
             funds,
         };
         Ok(init.into())
@@ -112,8 +112,8 @@ pub trait InstantiateCallback: Serialize {
         &self,
         testable: impl MultiTestable,
         app: &mut App,
-        sender: &str,
-        label: &str,
+        sender: impl Into<String>,
+        label: impl Into<String>,
         send_funds: &[Coin],
     ) -> AnyResult<ContractInfo> {
         let stored_code = testable.store_contract(app);
@@ -184,14 +184,15 @@ pub trait ExecuteCallback: Serialize {
     #[cfg(feature = "testing")]
     fn test_exec(
         &self,
-        contract: &ContractInfo,
+        contract: &(impl Into<ContractInfo> + Clone),
         app: &mut App,
-        sender: &str,
+        sender: impl Into<String>,
         send_funds: &[Coin],
     ) -> AnyResult<AppResponse>
     where
         Self: Serialize + std::fmt::Debug,
     {
+        let contract: ContractInfo = contract.clone().into();
         app.execute_contract(Addr::unchecked(sender), &contract, &self, send_funds)
     }
 }
@@ -244,7 +245,7 @@ pub trait Query: Serialize {
     /// * `app` - a reference to the multi-test App   
     #[cfg(not(target_arch = "wasm32"))]
     #[cfg(feature = "testing")]
-    fn test_query<T: DeserializeOwned>(&self, info: &ContractInfo, app: &App) -> StdResult<T> {
+    fn test_query<T: DeserializeOwned>(&self, info: &(impl Into<ContractInfo> + Clone), app: &App) -> StdResult<T> {
         let mut msg = to_binary(self)?;
         // can not have 0 block size
         let padding = if Self::BLOCK_SIZE == 0 {
@@ -252,6 +253,7 @@ pub trait Query: Serialize {
         } else {
             Self::BLOCK_SIZE
         };
+        let info: ContractInfo = info.clone().into();
         space_pad(&mut msg.0, padding);
         app.wrap().query(&QueryRequest::Wasm(WasmQuery::Smart {
             contract_addr: info.address.to_string(),

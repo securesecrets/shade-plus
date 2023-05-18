@@ -34,10 +34,10 @@ pub struct Contract {
 }
 
 impl RawContract {
-    pub fn new(address: &str, code_hash: &str) -> Self {
+    pub fn new(address: impl Into<String>, code_hash: impl Into<String>) -> Self {
         RawContract {
-            address: address.to_string(),
-            code_hash: code_hash.to_string(),
+            address: address.into(),
+            code_hash: code_hash.into(),
         }
     }
 
@@ -59,10 +59,10 @@ impl Contract {
     pub fn is_valid(&self) -> bool {
         true
     }
-    pub fn new(address: &str, code_hash: &str) -> Self {
+    pub fn new(address: impl Into<String>, code_hash: impl Into<String>) -> Self {
         Contract {
             address: Addr::unchecked(address),
-            code_hash: code_hash.to_string(),
+            code_hash: code_hash.into(),
         }
     }
 }
@@ -131,7 +131,6 @@ impl<'a> PrimaryKey<'a> for &Contract {
     }
 }
 
-#[cfg(feature = "test")]
 #[cfg(test)]
 mod test {
     use super::*;

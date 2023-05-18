@@ -6,7 +6,7 @@ authors = [ "hoomp3" ]
 description = "Toolkit used by Shade Protocol contracts developed for Secret Network"
 
 [features]
-default = []
+default = ["testing", "admin-auth", "query-auth"]
 query-auth = ["dep:query-authentication", "dep:remain"]
 admin-auth = []
 testing = ["shade-multi-test", "dep:anyhow"]

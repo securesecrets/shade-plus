@@ -1,4 +1,4 @@
-use cosmwasm_std::{QuerierWrapper, StdResult, Addr};
+use cosmwasm_std::{QuerierWrapper, StdResult, Addr, ContractInfo};
 use self::errors::unauthorized_admin;
 use crate::{Contract, Query, ExecuteCallback, InstantiateCallback};
 use cosmwasm_schema::{cw_serde, QueryResponses};
@@ -91,11 +91,11 @@ pub struct ValidateAdminPermissionResponse {
 }
 
 
-pub fn validate_admin<T: Into<String> + Clone>(
+pub fn validate_admin<T: Into<String> + Clone, U: Into<ContractInfo> + Clone>(
     querier: &QuerierWrapper,
     permission: AdminPermissions,
     user: T,
-    admin_auth: &Contract,
+    admin_auth: &U,
 ) -> StdResult<()> {
     if admin_is_valid(querier, permission.clone(), user.clone(), admin_auth)? {
         Ok(())
@@ -104,11 +104,11 @@ pub fn validate_admin<T: Into<String> + Clone>(
     }
 }
 
-pub fn admin_is_valid<T: Into<String>>(
+pub fn admin_is_valid<T: Into<String>, U: Into<ContractInfo> + Clone>(
     querier: &QuerierWrapper,
     permission: AdminPermissions,
     user: T,
-    admin_auth: &Contract,
+    admin_auth: &U,
 ) -> StdResult<bool> {
     let admin_resp: StdResult<ValidateAdminPermissionResponse> =
         QueryMsg::ValidateAdminPermission {

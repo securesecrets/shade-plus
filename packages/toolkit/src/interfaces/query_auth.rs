@@ -1,6 +1,7 @@
 use cosmwasm_schema::cw_serde;
-use cosmwasm_std::{Binary, Addr};
+use cosmwasm_std::{Binary, Addr, QuerierWrapper, StdResult, ContractInfo, StdError, from_binary};
 use query_authentication::permit::Permit;
+use serde::de::DeserializeOwned;
 
 use crate::{InstantiateCallback, Contract, ExecuteCallback, ResponseStatus, Query};
 
@@ -95,4 +96,82 @@ pub enum QueryAnswer {
         user: Addr,
         is_revoked: bool,
     },
+}
+
+pub struct PermitAuthentication<T: DeserializeOwned> {
+    pub sender: Addr,
+    pub revoked: bool,
+    pub data: T
+}
+
+/// Authenticates a permit through query auth and returns the result without deserializing the binary.
+pub fn authenticate_arbitrary_permit<U: Into<ContractInfo> + Clone>(
+    permit: QueryPermit,
+    querier: &QuerierWrapper,
+    authenticator: &U,
+) -> StdResult<PermitAuthentication<Binary>> {
+    let res: QueryAnswer =
+        QueryMsg::ValidatePermit { permit: permit.clone() }.query(querier, authenticator)?;
+
+    let sender: Addr;
+    let revoked: bool;
+
+    match res {
+        QueryAnswer::ValidatePermit { user, is_revoked } => {
+            sender = user;
+            revoked = is_revoked;
+        }
+        _ => return Err(StdError::generic_err("Unexpected response from query auth.")),
+    }
+
+    Ok(PermitAuthentication {
+        sender,
+        revoked,
+        data: permit.params.data,
+    })
+}
+
+pub fn authenticate_permit<T: DeserializeOwned, U: Into<ContractInfo> + Clone>(
+    permit: QueryPermit,
+    querier: &QuerierWrapper,
+    authenticator: &U,
+) -> StdResult<PermitAuthentication<T>> {
+    let res: QueryAnswer = QueryMsg::ValidatePermit { permit: permit.clone() }
+        .query(querier, authenticator)?;
+
+    let sender: Addr;
+    let revoked: bool;
+
+    match res {
+        QueryAnswer::ValidatePermit { user, is_revoked } => {
+            sender = user;
+            revoked = is_revoked;
+        }
+        _ => return Err(StdError::generic_err("Wrong query response")),
+    }
+
+    Ok(PermitAuthentication {
+        sender,
+        revoked,
+        data: from_binary(&permit.params.data)?
+    })
+}
+
+pub fn authenticate_vk<U: Into<ContractInfo> + Clone>(
+    address: Addr,
+    key: String,
+    querier: &QuerierWrapper,
+    authenticator: &U
+) -> StdResult<bool> {
+    let res: QueryAnswer = QueryMsg::ValidateViewingKey {
+        user: address,
+        key,
+    }.query(querier, authenticator)?;
+
+    match res {
+        QueryAnswer::ValidateViewingKey { is_valid } => {
+            Ok(is_valid)
+        }
+        _ => Err(StdError::generic_err("Unauthorized")),
+    }
 }
