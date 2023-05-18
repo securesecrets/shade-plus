@@ -20,7 +20,7 @@ pub fn validate_vec(api: &dyn Api, unvalidated_addresses: &[String]) -> StdResul
 }
 
 #[cw_serde]
-#[derive(BorshSerialize, BorshDeserialize, Eq)]
+#[derive(BorshSerialize, BorshDeserialize, Eq, Default, Hash)]
 pub struct RawContract {
     pub address: String,
     pub code_hash: String,
