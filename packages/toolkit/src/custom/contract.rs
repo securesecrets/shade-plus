@@ -55,6 +55,24 @@ impl RawContract {
     }
 }
 
+impl From<ContractInfo> for RawContract {
+    fn from(item: ContractInfo) -> Self {
+        RawContract {
+            address: item.address.to_string(),
+            code_hash: item.code_hash,
+        }
+    }
+}
+
+impl Into<ContractInfo> for RawContract {
+    fn into(self) -> ContractInfo {
+        ContractInfo {
+            address: Addr::unchecked(self.address),
+            code_hash: self.code_hash,
+        }
+    }
+}
+
 impl Contract {
     pub fn is_valid(&self) -> bool {
         true
