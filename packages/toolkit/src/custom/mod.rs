@@ -3,7 +3,7 @@
 use cosmwasm_schema::cw_serde;
 
 pub mod contract;
-pub use contract::{Contract, RawContract};
+pub use contract::*;
 
 #[cw_serde]
 pub enum ResponseStatus {
