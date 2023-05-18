@@ -59,7 +59,6 @@ impl Contract {
     pub fn is_valid(&self) -> bool {
         true
     }
-    #[cfg(feature = "test")]
     pub fn new(address: &str, code_hash: &str) -> Self {
         Contract {
             address: Addr::unchecked(address),
