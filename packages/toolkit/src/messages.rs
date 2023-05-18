@@ -1,7 +1,6 @@
 #[cfg(not(target_arch = "wasm32"))]
 #[cfg(feature = "testing")]
 use crate::multi_test::{AnyResult, App, AppResponse, Executor, MultiTestable};
-#[cfg(not(target_arch = "wasm32"))]
 use cosmwasm_std::{
     to_binary, Addr, Binary, Coin, ContractInfo, CosmosMsg, QuerierWrapper, QueryRequest, Response,
     StdResult, WasmMsg, WasmQuery,
