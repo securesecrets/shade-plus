@@ -33,6 +33,7 @@ quote = "1"
 syn = { version = "1", features = ["derive", "full", "printing", "extra-traits"] }
 
 rand = { version = "0.8.5", default-features = false }
+remain = { version = "0.2.2" }
 rstest_reuse = "0.4.0"
 rstest = "0.15.0"
 criterion = { version = "0.3", features = [ "html_reports" ] }

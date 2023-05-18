@@ -6,18 +6,23 @@ authors = [ "hoomp3" ]
 description = "Toolkit used by Shade Protocol contracts developed for Secret Network"
 
 [features]
-default = []
+default = ["admin-auth", "query-auth"]
+query-auth = ["dep:query-authentication", "dep:remain"]
+admin-auth = []
 testing = ["shade-multi-test", "dep:anyhow"]
 
 [dependencies]
 cosmwasm-std = { workspace = true }
 cosmwasm-schema = { workspace = true }
 serde = { workspace = true }
+schemars = { workspace = true }
 borsh = { workspace = true }
 
 secret-storage-plus = { path = "../storage/plus" }
 better-secret-math = { path = "../math" }
 anyhow = { workspace = true, optional = true }
+query-authentication = { path = "../query-authentication", optional = true }
+remain = { workspace = true, optional = true }
 
 [target.'cfg(not(target_arch="wasm32"))'.dependencies]
 rstest = { workspace = true }
