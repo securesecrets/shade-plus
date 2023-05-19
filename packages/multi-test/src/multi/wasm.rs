@@ -63,7 +63,7 @@ const SAFE_NANOID_LENGTH: usize = 40;
 const CONTRACTS: Map<&Addr, ContractData> = Map::new("contracts");
 
 pub const NAMESPACE_WASM: &[u8] = b"wasm";
-pub const CONTRACT_ATTR: &str = "_contract_addr";
+pub const CONTRACT_ATTR: &str = "_contract_address";
 
 #[derive(Clone, std::fmt::Debug, PartialEq, JsonSchema)]
 pub struct WasmSudo {
@@ -648,12 +648,20 @@ where
         let mut app_events = Vec::with_capacity(2 + events.len());
         app_events.push(custom_event);
 
+        // TODO: check if this behavior reflects the spec
+        // compare with https://github.com/hackbg/fadroma/tree/master/crates/fadroma/ensemble
         // we only emit the `wasm` event if some attributes are specified
         if !attributes.is_empty() {
+            // Remove any added padding for readability. This padding is only used to maintain privacy on the blockchain.
+            let trimmed_attributes = attributes.iter().map(|k| Attribute {
+                key: k.key.trim().to_string(),
+                value: k.value.trim().to_string(),
+                encrypted: k.encrypted,
+            }).collect::<Vec<Attribute>>();
             // turn attributes into event and place it first
             let wasm_event = Event::new("wasm")
                 .add_attribute(CONTRACT_ATTR, contract)
-                .add_attributes(attributes);
+                .add_attributes(trimmed_attributes);
             app_events.push(wasm_event);
         }
 

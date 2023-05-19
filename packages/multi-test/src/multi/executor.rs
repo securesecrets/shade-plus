@@ -145,7 +145,7 @@ where
     fn migrate_contract<T: Serialize>(
         &mut self,
         _sender: Addr,
-        _contract_addr: Addr,
+        _contract_address: Addr,
         _msg: &T,
         _new_code_id: u64,
     ) -> AnyResult<AppResponse> {
