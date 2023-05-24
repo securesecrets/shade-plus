@@ -3,9 +3,6 @@
 pub mod multi;
 
 #[cfg(feature = "testing")]
-pub use multi::*;
-
-#[cfg(feature = "testing")]
 pub use multi as multi_test;
 
 pub const BLOCK_SIZE: usize = 256;
