@@ -1,4 +1,4 @@
-use crate::{
+use crate::multi::{
     AnyResult, App, AppResult, ExecuteCallback, InstantiateCallback, MultiTestable, Query,
 };
 use cosmwasm_std::{Addr, Coin, ContractInfo, StdResult};
