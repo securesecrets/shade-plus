@@ -91,6 +91,7 @@ where
             msg: init_msg,
             funds: send_funds.to_vec(),
             label: label.into(),
+            admin: None,
         };
         let res = self.execute(sender, msg.into())?;
         for e in res.events {

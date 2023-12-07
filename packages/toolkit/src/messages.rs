@@ -90,6 +90,7 @@ pub trait InstantiateCallback: Serialize {
             msg,
             label: label.into(),
             funds,
+            admin: None,
         };
         Ok(init.into())
     }
@@ -244,7 +245,11 @@ pub trait Query: Serialize {
     /// * `app` - a reference to the multi-test App   
     #[cfg(not(target_arch = "wasm32"))]
     #[cfg(feature = "testing")]
-    fn test_query<T: DeserializeOwned>(&self, info: &(impl Into<ContractInfo> + Clone), app: &App) -> StdResult<T> {
+    fn test_query<T: DeserializeOwned>(
+        &self,
+        info: &(impl Into<ContractInfo> + Clone),
+        app: &App,
+    ) -> StdResult<T> {
         let mut msg = to_binary(self)?;
         // can not have 0 block size
         let padding = if Self::BLOCK_SIZE == 0 {

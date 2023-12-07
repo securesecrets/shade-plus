@@ -45,6 +45,7 @@ impl Module for IbcKeeper {
                 to_address,
                 amount,
                 timeout,
+                memo,
             } => todo!(),
             IbcMsg::SendPacket {
                 channel_id,
