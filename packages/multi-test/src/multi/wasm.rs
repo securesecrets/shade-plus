@@ -439,6 +439,7 @@ where
                 msg,
                 funds,
                 label,
+                admin: None,
             } => {
                 if label.is_empty() {
                     bail!("Label is required on all contracts");
@@ -653,11 +654,14 @@ where
         // we only emit the `wasm` event if some attributes are specified
         if !attributes.is_empty() {
             // Remove any added padding for readability. This padding is only used to maintain privacy on the blockchain.
-            let trimmed_attributes = attributes.iter().map(|k| Attribute {
-                key: k.key.trim().to_string(),
-                value: k.value.trim().to_string(),
-                encrypted: k.encrypted,
-            }).collect::<Vec<Attribute>>();
+            let trimmed_attributes = attributes
+                .iter()
+                .map(|k| Attribute {
+                    key: k.key.trim().to_string(),
+                    value: k.value.trim().to_string(),
+                    encrypted: k.encrypted,
+                })
+                .collect::<Vec<Attribute>>();
             // turn attributes into event and place it first
             let wasm_event = Event::new("wasm")
                 .add_attribute(CONTRACT_ATTR, contract)
@@ -840,7 +844,10 @@ where
                 address: address.into(),
                 code_hash,
             },
-            transaction: Some(TransactionInfo { index: 0 }),
+            transaction: Some(TransactionInfo {
+                index: 0,
+                hash: "".to_string(),
+            }),
         }
     }
 
