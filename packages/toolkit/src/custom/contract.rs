@@ -1,7 +1,8 @@
-use secret_storage_plus::{Key, KeyDeserialize, PrimaryKey};
 use borsh::{BorshDeserialize, BorshSerialize};
+use borsh_derive::{BorshDeserialize, BorshSerialize};
 use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{Addr, Api, ContractInfo, StdResult};
+use secret_storage_plus::{Key, KeyDeserialize, PrimaryKey};
 
 /// Validates an optional address.
 pub fn opt_addr_validate(api: &dyn Api, addr: &Option<String>) -> StdResult<Option<Addr>> {
@@ -174,7 +175,7 @@ mod test {
     #[test]
     fn borsh_impl() {
         let contract = Contract::new("addr", "code_hash");
-        let serialized = contract.try_to_vec().unwrap();
+        let serialized = borsh::to_vec(&contract).unwrap();
         let deserialized = Contract::try_from_slice(&serialized).unwrap();
         assert_eq!(contract, deserialized);
     }

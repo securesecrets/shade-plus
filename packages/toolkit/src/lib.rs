@@ -10,8 +10,8 @@ pub const BLOCK_SIZE: usize = 256;
 mod custom;
 mod messages;
 
-pub mod interfaces;
 pub mod error;
+pub mod interfaces;
 pub use custom::*;
 pub use messages::*;
 

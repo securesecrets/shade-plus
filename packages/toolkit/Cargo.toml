@@ -17,6 +17,7 @@ cosmwasm-schema = { workspace = true }
 serde = { workspace = true }
 schemars = { workspace = true }
 borsh = { workspace = true }
+borsh-derive = { workspace = true }
 
 secret-storage-plus = { path = "../storage/plus" }
 better-secret-math = { path = "../math" }

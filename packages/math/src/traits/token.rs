@@ -1,30 +1,44 @@
-use cosmwasm_std::{StdResult, StdError};
+use cosmwasm_std::{StdError, StdResult};
 use ethnum::U256;
 
-use crate::common::{exp10, muldiv, bankers_round};
+use crate::common::{bankers_round, exp10, muldiv};
 
 pub trait TokenMath {
     const NORMALIZED_PRECISION: u8;
     const BANKERS_ROUNDING_ENABLED: bool;
     /// Amount (token decimal precision) -> Amount (normalized decimal precision).
-    fn normalize_amount_from_any_utokens(amount: impl Into<U256>, token_decimals: u8) -> StdResult<U256> {
+    fn normalize_amount_from_any_utokens(
+        amount: impl Into<U256>,
+        token_decimals: u8,
+    ) -> StdResult<U256> {
         let amount: U256 = amount.into();
         if token_decimals == Self::NORMALIZED_PRECISION {
             Ok(amount)
         } else {
-            muldiv(amount, exp10(Self::NORMALIZED_PRECISION.into()), exp10(token_decimals))
+            muldiv(
+                amount,
+                exp10(Self::NORMALIZED_PRECISION.into()),
+                exp10(token_decimals),
+            )
         }
     }
 
     /// Amount (normalized decimal precision) -> Amount (token decimal precision).
-    fn denormalize_amount_to_any_utokens(amount: impl Into<U256>, token_decimals: u8) -> StdResult<U256> {
+    fn denormalize_amount_to_any_utokens(
+        amount: impl Into<U256>,
+        token_decimals: u8,
+    ) -> StdResult<U256> {
         let normalized_amount: U256 = amount.into();
         if token_decimals == Self::NORMALIZED_PRECISION {
             Ok(normalized_amount)
         } else {
             if Self::BANKERS_ROUNDING_ENABLED {
                 if token_decimals > Self::NORMALIZED_PRECISION {
-                    return Err(StdError::generic_err(format!("Token decimals {} must be <= normalized precision {}", token_decimals, Self::NORMALIZED_PRECISION)));
+                    return Err(StdError::generic_err(format!(
+                        "Token decimals {} must be <= normalized precision {}",
+                        token_decimals,
+                        Self::NORMALIZED_PRECISION
+                    )));
                 };
                 let precision_diff = Self::NORMALIZED_PRECISION - token_decimals;
                 Ok(bankers_round(normalized_amount.into(), precision_diff) / exp10(precision_diff))
@@ -35,13 +49,20 @@ pub trait TokenMath {
     }
 
     /// Amount (normalized decimal precision) -> Amount (normalized decimals, but excess precision truncated or rounded)
-    fn normalize_amount_to_any_token_precision(amount: impl Into<U256>, token_decimals: u8) -> StdResult<U256> {
+    fn normalize_amount_to_any_token_precision(
+        amount: impl Into<U256>,
+        token_decimals: u8,
+    ) -> StdResult<U256> {
         let amount: U256 = amount.into();
         if token_decimals == Self::NORMALIZED_PRECISION {
             Ok(amount)
         } else {
             if token_decimals > Self::NORMALIZED_PRECISION {
-                return Err(StdError::generic_err(format!("Token decimals {} must be <= normalized precision {}", token_decimals, Self::NORMALIZED_PRECISION)));
+                return Err(StdError::generic_err(format!(
+                    "Token decimals {} must be <= normalized precision {}",
+                    token_decimals,
+                    Self::NORMALIZED_PRECISION
+                )));
             };
             let precision_diff = Self::NORMALIZED_PRECISION - token_decimals;
             if Self::BANKERS_ROUNDING_ENABLED {
@@ -96,5 +117,4 @@ pub trait PriceMath {
         let normalized_value = muldiv(value, price_precision, value_precision)?;
         muldiv(normalized_value, amount_precision, self.price())
     }
-
 }

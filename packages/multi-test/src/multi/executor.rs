@@ -81,7 +81,7 @@ where
         init_msg: &T,
         send_funds: &[Coin],
         label: U,
-        _admin: Option<String>,
+        admin: Option<String>,
     ) -> AnyResult<ContractInfo> {
         // instantiate contract
         let init_msg = to_binary(init_msg)?;
@@ -91,7 +91,7 @@ where
             msg: init_msg,
             funds: send_funds.to_vec(),
             label: label.into(),
-            admin: None,
+            admin,
         };
         let res = self.execute(sender, msg.into())?;
         for e in res.events {
@@ -145,21 +145,19 @@ where
     /// This is just a helper around execute()
     fn migrate_contract<T: Serialize>(
         &mut self,
-        _sender: Addr,
-        _contract_address: Addr,
-        _msg: &T,
-        _new_code_id: u64,
+        sender: Addr,
+        contract_info: &ContractInfo,
+        msg: &T,
+        new_code_id: u64,
     ) -> AnyResult<AppResponse> {
-        AnyResult::Err(anyhow::Error::msg(
-            "Native Cosmos migration functionality is disabled on Secret Network.",
-        ))
-        // let msg = to_binary(msg)?;
-        // let msg = WasmMsg::Migrate {
-        //     contract_addr: contract_addr.into(),
-        //     msg,
-        //     new_code_id,
-        // };
-        // self.execute(sender, msg.into())
+        let msg = to_binary(msg)?;
+        let msg = WasmMsg::Migrate {
+            contract_addr: contract_info.address.clone().into_string(),
+            code_hash: contract_info.code_hash.clone(),
+            msg,
+            code_id: new_code_id,
+        };
+        self.execute(sender, msg.into())
     }
 
     fn send_tokens(

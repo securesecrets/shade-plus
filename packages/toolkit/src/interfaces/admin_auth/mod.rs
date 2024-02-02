@@ -1,7 +1,7 @@
-use cosmwasm_std::{QuerierWrapper, StdResult, Addr, ContractInfo};
 use self::errors::unauthorized_admin;
-use crate::{Contract, Query, ExecuteCallback, InstantiateCallback};
+use crate::{Contract, ExecuteCallback, InstantiateCallback, Query};
 use cosmwasm_schema::{cw_serde, QueryResponses};
+use cosmwasm_std::{Addr, ContractInfo, QuerierWrapper, StdResult};
 
 mod errors;
 
@@ -90,7 +90,6 @@ pub struct ValidateAdminPermissionResponse {
     pub has_permission: bool,
 }
 
-
 pub fn validate_admin<T: Into<String> + Clone, U: Into<ContractInfo> + Clone>(
     querier: &QuerierWrapper,
     permission: AdminPermissions,
@@ -122,8 +121,6 @@ pub fn admin_is_valid<T: Into<String>, U: Into<ContractInfo> + Clone>(
         Err(err) => Err(err),
     }
 }
-
-
 
 #[derive(Clone)]
 pub enum AdminPermissions {

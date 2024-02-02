@@ -95,6 +95,33 @@ pub trait InstantiateCallback: Serialize {
         Ok(init.into())
     }
 
+    fn to_cosmos_msg_with_admin(
+        &self,
+        label: impl Into<String>,
+        code_id: u64,
+        code_hash: impl Into<String>,
+        funds: Vec<Coin>,
+        admin: Option<String>,
+    ) -> StdResult<CosmosMsg> {
+        let mut msg = to_binary(self)?;
+        // can not have 0 block size
+        let padding = if Self::BLOCK_SIZE == 0 {
+            1
+        } else {
+            Self::BLOCK_SIZE
+        };
+        space_pad(&mut msg.0, padding);
+        let init = WasmMsg::Instantiate {
+            code_id,
+            code_hash: code_hash.into(),
+            msg,
+            label: label.into(),
+            funds,
+            admin,
+        };
+        Ok(init.into())
+    }
+
     /// Returns ContractInfo
     ///
     /// Tries to instantiate a contract into the multi test app.
@@ -124,6 +151,28 @@ pub trait InstantiateCallback: Serialize {
             send_funds,
             label,
             None,
+        )
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(feature = "testing")]
+    fn test_init_with_admin(
+        &self,
+        testable: impl MultiTestable,
+        app: &mut App,
+        sender: impl Into<String>,
+        label: impl Into<String>,
+        send_funds: &[Coin],
+        admin: Option<String>,
+    ) -> AnyResult<ContractInfo> {
+        let stored_code = testable.store_contract(app);
+        app.instantiate_contract(
+            stored_code,
+            Addr::unchecked(sender),
+            &self,
+            send_funds,
+            label,
+            admin,
         )
     }
 }
@@ -242,7 +291,7 @@ pub trait Query: Serialize {
     /// # Arguments
     ///
     /// * `info` - contract info of instantiated contract
-    /// * `app` - a reference to the multi-test App   
+    /// * `app` - a reference to the multi-test App
     #[cfg(not(target_arch = "wasm32"))]
     #[cfg(feature = "testing")]
     fn test_query<T: DeserializeOwned>(

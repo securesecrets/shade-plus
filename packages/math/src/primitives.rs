@@ -3,7 +3,7 @@
 //! NOTE: JSON standard can only work with integer up to 53 bits. So we need helper classes for
 //! 64-bit and 128-bit integers.
 
-use borsh::{BorshDeserialize, BorshSerialize};
+use borsh_derive::{BorshDeserialize, BorshSerialize};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 macro_rules! impl_str_type {

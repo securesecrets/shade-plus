@@ -1457,7 +1457,10 @@ mod test {
         // standard wasm-execute event
         let exec = &res.events[0];
         assert_eq!(exec.ty.as_str(), "execute");
-        assert_eq!(exec.attributes, [("_contract_address", &reflect_addr.address)]);
+        assert_eq!(
+            exec.attributes,
+            [("_contract_address", &reflect_addr.address)]
+        );
         // only transfer event from bank
         let transfer = &res.events[1];
         assert_eq!(transfer.ty.as_str(), "transfer");
@@ -1979,7 +1982,6 @@ mod test {
         assert_eq!(get_balance(&app, &beneficiary), coins(30, "btc"));
     }
 
-    #[ignore]
     #[test]
     fn sent_wasm_migration_works() {
         // The plan:
@@ -2034,31 +2036,21 @@ mod test {
         let migrate_msg = hackatom::MigrateMsg {
             new_guy: random.to_string(),
         };
-        app.migrate_contract(
-            beneficiary,
-            contract.address.clone(),
-            &migrate_msg,
-            contract_id.code_id,
-        )
-        .unwrap_err();
+        app.migrate_contract(beneficiary, &contract, &migrate_msg, contract_id.code_id)
+            .unwrap_err();
 
         // migrate fails if unregistred code id
         app.migrate_contract(
             owner.clone(),
-            contract.address.clone(),
+            &contract,
             &migrate_msg,
             contract_id.code_id + 7,
         )
         .unwrap_err();
 
         // migrate succeeds when the stars align
-        app.migrate_contract(
-            owner,
-            contract.address.clone(),
-            &migrate_msg,
-            contract_id.code_id,
-        )
-        .unwrap();
+        app.migrate_contract(owner, &contract, &migrate_msg, contract_id.code_id)
+            .unwrap();
 
         // check beneficiary updated
         let state: hackatom::InstantiateMsg = app

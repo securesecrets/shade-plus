@@ -1,17 +1,14 @@
 //! Helper functions and structs that make it easier to test contracts.
 pub mod derive;
 
+use core::{fmt::Debug, panic::AssertUnwindSafe};
 use std::panic;
-use core::{
-    panic::AssertUnwindSafe,
-    fmt::Debug,
-};
 
-use cosmwasm_std::{Timestamp, Addr, ContractInfo, StdResult, Coin};
+use cosmwasm_std::{Addr, Coin, ContractInfo, StdResult, Timestamp};
 use serde::de::DeserializeOwned;
 pub use shade_multi_test::*;
 
-use crate::{Query, InstantiateCallback, ExecuteCallback};
+use crate::{ExecuteCallback, InstantiateCallback, Query};
 
 /// Trait for making integration with multi-test easier.
 pub trait MultiTestable {
@@ -24,7 +21,8 @@ pub type AppResult = AnyResult<AppResponse>;
 pub trait Suite {
     fn app(&mut self) -> &mut App;
     fn set_time(&mut self, new_time: u64) {
-        self.app().update_block(|b| b.time = Timestamp::from_seconds(new_time));
+        self.app()
+            .update_block(|b| b.time = Timestamp::from_seconds(new_time));
     }
     fn set_block(&mut self, new_block: u64) {
         self.app().update_block(|b| b.height = new_block);
@@ -33,10 +31,12 @@ pub trait Suite {
         self.app().update_block(|b| b.height += blocks);
     }
     fn fast_forward(&mut self, seconds: u64) {
-        self.app().update_block(|b| b.time = b.time.plus_seconds(seconds));
+        self.app()
+            .update_block(|b| b.time = b.time.plus_seconds(seconds));
     }
     fn rewind(&mut self, seconds: u64) {
-        self.app().update_block(|b| b.time = b.time.minus_seconds(seconds));
+        self.app()
+            .update_block(|b| b.time = b.time.minus_seconds(seconds));
     }
     /// Assert that the result of code that is unwind safe is an error.
     fn unwind_err(hook: impl FnOnce()) {
@@ -46,7 +46,10 @@ pub trait Suite {
     }
 
     fn assert_error(res: AppResult, expected: impl ToString) {
-        assert_eq!(res.unwrap_err().root_cause().to_string(), expected.to_string());
+        assert_eq!(
+            res.unwrap_err().root_cause().to_string(),
+            expected.to_string()
+        );
     }
 
     /// Assert that two vectors are equal, ignoring order.
@@ -171,4 +174,3 @@ impl Into<String> for User {
         self.address.to_string()
     }
 }
-

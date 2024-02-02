@@ -1,5 +1,5 @@
 use cosmwasm_schema::cw_serde;
-use cosmwasm_std::{Response, StdResult, StdError};
+use cosmwasm_std::{Response, StdError, StdResult};
 use schemars::_serde_json::to_string;
 use serde::Serialize;
 
@@ -115,9 +115,9 @@ pub trait CodeType: Into<u8> + Clone {
 
 #[cfg(test)]
 pub mod tests {
-    use cosmwasm_std::{Response, StdError, StdResult};
-    use cosmwasm_schema::cw_serde;
     use crate::error::{build_string, CodeType, DetailedError};
+    use cosmwasm_schema::cw_serde;
+    use cosmwasm_std::{Response, StdError, StdResult};
 
     #[cw_serde]
     #[repr(u8)]
@@ -205,10 +205,10 @@ pub mod tests {
             DetailedError::from_code("contract", TestCode::Error3, vec!["address", "amount"]);
         assert_eq!(err3.code, 2);
         assert_eq!(err3.r#type, TestCode::Error3);
-        assert_eq!(err3.context, vec![
-            "address".to_string(),
-            "amount".to_string()
-        ]);
+        assert_eq!(
+            err3.context,
+            vec!["address".to_string(), "amount".to_string()]
+        );
         assert_eq!(err3.verbose, "Expecting address but got amount".to_string());
     }
 

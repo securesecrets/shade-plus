@@ -74,6 +74,7 @@ impl<'a, T: BorshSerialize + BorshDeserialize> Item<'a, T> {
 #[cfg(test)]
 mod test {
     use super::*;
+    use borsh_derive::{BorshDeserialize, BorshSerialize};
     use cosmwasm_std::testing::MockStorage;
     use cosmwasm_std::{to_vec, OverflowError, OverflowOperation, StdError};
     use serde::{Deserialize, Serialize};

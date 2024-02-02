@@ -30,8 +30,10 @@ macro_rules! impl_into_contract {
 #[macro_export]
 macro_rules! implement_harness {
     ($x:ident, $s:ident) => {
-        use shade_toolkit::multi::{App, ContractInstantiationInfo, ContractWrapper, MultiTestable};
         use cosmwasm_std::{Addr, ContractInfo};
+        use shade_toolkit::multi::{
+            App, ContractInstantiationInfo, ContractWrapper, MultiTestable,
+        };
 
         #[derive(Clone, Debug)]
         pub struct $x(ContractInfo);
@@ -60,9 +62,11 @@ macro_rules! implement_harness {
 #[macro_export]
 macro_rules! implement_harness_with_default_admin {
     ($x:ident, $s:ident) => {
-        use mulberry_multi_test_utils::traits::tester::User;
-        use shade_toolkit::multi::{App, ContractInstantiationInfo, ContractWrapper, MultiTestable};
         use cosmwasm_std::{Addr, ContractInfo};
+        use mulberry_multi_test_utils::traits::tester::User;
+        use shade_toolkit::multi::{
+            App, ContractInstantiationInfo, ContractWrapper, MultiTestable,
+        };
 
         #[derive(Clone, Debug)]
         pub struct $x(ContractInfo, User);
@@ -99,8 +103,10 @@ macro_rules! implement_harness_with_default_admin {
 #[macro_export]
 macro_rules! implement_harness_with_reply {
     ($x:ident, $s:ident) => {
-        use shade_toolkit::multi::{App, ContractInstantiationInfo, ContractWrapper, MultiTestable};
         use cosmwasm_std::{Addr, ContractInfo};
+        use shade_toolkit::multi::{
+            App, ContractInstantiationInfo, ContractWrapper, MultiTestable,
+        };
 
         #[derive(Clone, Debug)]
         pub struct $x(ContractInfo);
@@ -111,7 +117,8 @@ macro_rules! implement_harness_with_reply {
                     $s::contract::execute,
                     $s::contract::instantiate,
                     $s::contract::query,
-                ).with_reply($s::contract::reply);
+                )
+                .with_reply($s::contract::reply);
                 app.store_code(Box::new(contract))
             }
 

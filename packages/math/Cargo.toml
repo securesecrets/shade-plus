@@ -22,6 +22,7 @@ cosmwasm-schema = { workspace = true }
 schemars = { workspace = true }
 serde = { workspace = true }
 borsh = { workspace = true }
+borsh-derive = { workspace = true }
 thiserror = { workspace = true }
 ethnum = { workspace = true, features = ["cosmos", "borsh", "serde", "macros"] }
 primitive-types = { workspace = true }

@@ -90,6 +90,7 @@ pub(crate) fn encode_length(namespace: &[u8]) -> [u8; 2] {
 mod test {
     use super::*;
     use borsh::BorshSerialize;
+    use borsh_derive::{BorshDeserialize, BorshSerialize};
     use cosmwasm_std::StdError;
     use serde::{Deserialize, Serialize};
 

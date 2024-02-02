@@ -33,8 +33,8 @@ pub fn serde_impl(input: DeriveInput) -> DeriveInput {
             #[derive(
                 serde::Serialize,
                 serde::Deserialize,
-                borsh::BorshSerialize,
-                borsh::BorshDeserialize,
+                borsh_derive::BorshSerialize,
+                borsh_derive::BorshDeserialize,
                 Clone,
                 Debug,
                 PartialEq,
@@ -46,8 +46,8 @@ pub fn serde_impl(input: DeriveInput) -> DeriveInput {
             #[derive(
                 serde::Serialize,
                 serde::Deserialize,
-                borsh::BorshSerialize,
-                borsh::BorshDeserialize,
+                borsh_derive::BorshSerialize,
+                borsh_derive::BorshDeserialize,
                 Clone,
                 Debug,
                 PartialEq,
@@ -76,8 +76,8 @@ mod tests {
             #[derive(
                 serde::Serialize,
                 serde::Deserialize,
-                borsh::BorshSerialize,
-                borsh::BorshDeserialize,
+                borsh_derive::BorshSerialize,
+                borsh_derive::BorshDeserialize,
                 Clone,
                 Debug,
                 PartialEq,

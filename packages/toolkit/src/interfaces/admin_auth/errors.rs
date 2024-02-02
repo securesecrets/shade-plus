@@ -1,6 +1,6 @@
 use crate::{
-    impl_into_u8,
     error::{build_string, CodeType, DetailedError},
+    impl_into_u8,
 };
 use cosmwasm_schema::cw_serde;
 use cosmwasm_std::StdError;
@@ -49,9 +49,11 @@ pub fn unregistered_admin(address: &str) -> StdError {
 }
 
 pub fn unauthorized_admin(address: &str, permission: &str) -> StdError {
-    DetailedError::from_code(ADMIN_TARGET, Error::UnauthorizedAdmin, vec![
-        address, permission,
-    ])
+    DetailedError::from_code(
+        ADMIN_TARGET,
+        Error::UnauthorizedAdmin,
+        vec![address, permission],
+    )
     .to_error()
 }
 pub fn unauthorized_super(super_admin: &str) -> StdError {
@@ -67,8 +69,10 @@ pub fn is_under_maintenance() -> StdError {
     DetailedError::from_code(ADMIN_TARGET, Error::IsUnderMaintenance, vec![]).to_error()
 }
 pub fn invalid_permission_format(permission: &str) -> StdError {
-    DetailedError::from_code(ADMIN_TARGET, Error::InvalidPermissionFormat, vec![
-        permission,
-    ])
+    DetailedError::from_code(
+        ADMIN_TARGET,
+        Error::InvalidPermissionFormat,
+        vec![permission],
+    )
     .to_error()
 }

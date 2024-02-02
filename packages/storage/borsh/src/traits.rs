@@ -8,8 +8,7 @@ use cw_storage_plus::PrimaryKey;
 pub struct Borsh;
 impl Borsh {
     pub fn serialize<T: BorshSerialize>(obj: &T) -> StdResult<Vec<u8>> {
-        obj.try_to_vec()
-            .map_err(|err| StdError::serialize_err(type_name::<T>(), err))
+        borsh::to_vec(obj).map_err(|err| StdError::serialize_err(type_name::<T>(), err))
     }
 
     pub fn deserialize<T: BorshDeserialize>(data: &[u8]) -> StdResult<T> {

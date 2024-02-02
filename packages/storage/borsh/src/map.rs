@@ -78,6 +78,7 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
+    use borsh_derive::{BorshDeserialize, BorshSerialize};
     use cosmwasm_std::testing::MockStorage;
     use cw_storage_plus::IntKey;
     use std::ops::Deref;

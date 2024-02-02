@@ -300,6 +300,7 @@ where
 mod tests {
     use super::*;
     use crate::deque::Deque;
+    use borsh_derive::{BorshDeserialize, BorshSerialize};
     use cosmwasm_std::testing::MockStorage;
     use cosmwasm_std::{StdError, StdResult};
     use serde::{Deserialize, Serialize};

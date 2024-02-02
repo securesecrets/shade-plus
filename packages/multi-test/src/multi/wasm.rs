@@ -439,7 +439,7 @@ where
                 msg,
                 funds,
                 label,
-                admin: None,
+                admin,
             } => {
                 if label.is_empty() {
                     bail!("Label is required on all contracts");
@@ -449,7 +449,7 @@ where
                     storage,
                     code_id as usize,
                     sender.clone(),
-                    None, //admin.map(Addr::unchecked),
+                    admin.map(Addr::unchecked),
                     label,
                     block.height,
                 )?;
@@ -499,44 +499,45 @@ where
                 }
                 Ok(res)
             }
-            // WasmMsg::Migrate {
-            //     contract_addr,
-            //     new_code_id,
-            //     msg,
-            // } => {
-            //     let contract_addr = api.addr_validate(&contract_addr)?;
+            WasmMsg::Migrate {
+                contract_addr,
+                msg,
+                code_hash: _,
+                code_id,
+            } => {
+                let contract_addr = api.addr_validate(&contract_addr)?;
 
-            //     // check admin status and update the stored code_id
-            //     let new_code_id = new_code_id as usize;
-            //     if !self.codes.contains_key(&new_code_id) {
-            //         bail!("Cannot migrate contract to unregistered code id");
-            //     }
-            //     let mut data = self.load_contract(storage, &contract_addr)?;
-            //     if data.admin != Some(sender) {
-            //         bail!("Only admin can migrate contract: {:?}", data.admin);
-            //     }
-            //     data.code_id = new_code_id;
-            //     self.save_contract(storage, &contract_addr, &data)?;
+                // check admin status and update the stored code_id
+                let new_code_id = code_id as usize;
+                if !self.codes.contains_key(&new_code_id) {
+                    bail!("Cannot migrate contract to unregistered code id");
+                }
+                let mut data = self.load_contract(storage, &contract_addr)?;
+                if data.admin != Some(sender) {
+                    bail!("Only admin can migrate contract: {:?}", data.admin);
+                }
+                data.code_id = new_code_id;
+                self.save_contract(storage, &contract_addr, &data)?;
 
-            //     // then call migrate
-            //     let res = self.call_migrate(
-            //         contract_addr.clone(),
-            //         api,
-            //         storage,
-            //         router,
-            //         block,
-            //         msg.to_vec(),
-            //     )?;
+                // then call migrate
+                let res = self.call_migrate(
+                    contract_addr.clone(),
+                    api,
+                    storage,
+                    router,
+                    block,
+                    msg.to_vec(),
+                )?;
 
-            //     let custom_event = Event::new("migrate")
-            //         .add_attribute(CONTRACT_ATTR, &contract_addr)
-            //         .add_attribute("code_id", new_code_id.to_string());
-            //     let (res, msgs) = self.build_app_response(&contract_addr, custom_event, res);
-            //     let mut res =
-            //         self.process_response(api, router, storage, block, contract_addr, res, msgs)?;
-            //     res.data = execute_response(res.data);
-            //     Ok(res)
-            // }
+                let custom_event = Event::new("migrate")
+                    .add_attribute(CONTRACT_ATTR, &contract_addr)
+                    .add_attribute("code_id", new_code_id.to_string());
+                let (res, msgs) = self.build_app_response(&contract_addr, custom_event, res);
+                let mut res =
+                    self.process_response(api, router, storage, block, contract_addr, res, msgs)?;
+                res.data = execute_response(res.data);
+                Ok(res)
+            }
             msg => bail!(Error::UnsupportedWasmMsg(msg)),
         }
     }

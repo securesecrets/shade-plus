@@ -1,6 +1,9 @@
-use crate::{U256, common::{muldiv, checked_add, checked_sub}};
+use crate::{
+    common::{checked_add, checked_sub, muldiv},
+    U256,
+};
 use btr_macros::borsh_serde;
-use cosmwasm_std::{Uint256, StdResult};
+use cosmwasm_std::{StdResult, Uint256};
 
 pub trait Rebase {
     fn elastic_uint256(&self) -> Uint256;
@@ -43,7 +46,11 @@ pub trait Rebase {
     }
 
     /// Add `elastic` to `self` and update `total.base`
-    fn add_elastic(&mut self, elastic: impl Into<U256> + Copy, round_up: bool) -> StdResult<(&mut Self, U256)> {
+    fn add_elastic(
+        &mut self,
+        elastic: impl Into<U256> + Copy,
+        round_up: bool,
+    ) -> StdResult<(&mut Self, U256)> {
         let base = self.to_base(elastic, round_up)?;
         let elastic: U256 = elastic.into();
         self.set_elastic(checked_add(self.elastic(), elastic)?);
@@ -52,7 +59,11 @@ pub trait Rebase {
     }
 
     /// Sub `elastic` from `self` and update `total.base`
-    fn sub_elastic(&mut self, elastic: impl Into<U256> + Copy, round_up: bool) -> StdResult<(&mut Self, U256)> {
+    fn sub_elastic(
+        &mut self,
+        elastic: impl Into<U256> + Copy,
+        round_up: bool,
+    ) -> StdResult<(&mut Self, U256)> {
         let base = self.to_base(elastic, round_up)?;
         let elastic: U256 = elastic.into();
         self.set_elastic(checked_sub(self.elastic(), elastic)?);
@@ -63,7 +74,11 @@ pub trait Rebase {
     }
 
     /// Add `base` to `total` and update `self.elastic()`
-    fn add_base(&mut self, base: impl Into<U256> + Copy, round_up: bool) -> StdResult<(&mut Self, U256)> {
+    fn add_base(
+        &mut self,
+        base: impl Into<U256> + Copy,
+        round_up: bool,
+    ) -> StdResult<(&mut Self, U256)> {
         let elastic = self.to_elastic(base, round_up)?;
         self.set_elastic(checked_add(self.elastic(), elastic)?);
         let base: U256 = base.into();
@@ -72,7 +87,11 @@ pub trait Rebase {
     }
 
     /// Sub `base` from `total` and update `self.elastic()`
-    fn sub_base(&mut self, base: impl Into<U256> + Copy, round_up: bool) -> StdResult<(&mut Self, U256)> {
+    fn sub_base(
+        &mut self,
+        base: impl Into<U256> + Copy,
+        round_up: bool,
+    ) -> StdResult<(&mut Self, U256)> {
         let elastic = self.to_elastic(base, round_up)?;
         self.set_elastic(checked_sub(self.elastic(), elastic)?);
         // The amount we are subtracting from elastic and base are proportional in this function

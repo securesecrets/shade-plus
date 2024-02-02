@@ -1,5 +1,5 @@
 use better_secret_math::U256;
-use borsh::{BorshDeserialize, BorshSerialize};
+use borsh_derive::{BorshDeserialize, BorshSerialize};
 use cosmwasm_std::testing::MockStorage;
 use criterion::{black_box, criterion_group, Criterion};
 use secret_borsh_storage::BorshItem;
