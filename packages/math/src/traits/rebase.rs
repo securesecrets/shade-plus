@@ -1,5 +1,5 @@
 use crate::{
-    common::{checked_add, checked_sub, exp10, muldiv},
+    common::{checked_add, checked_sub, muldiv},
     U256,
 };
 use btr_macros::borsh_serde;
@@ -18,16 +18,14 @@ pub trait Rebase {
     /// Calculates the base value in relationship to `elastic` and self
     fn to_base(&self, elastic: impl Into<U256> + Copy, round_up: bool) -> StdResult<U256> {
         let elastic = elastic.into();
-        let mut base;
-
-        // Use virtual offset approach in YieldBox to enforce a base conversion rate.
-        // Because we want to support at most 18 decimal fixed point math, we set the ratio to 1 : 1e19.
-        let total_shares = self.base() + exp10(19);
-        let total_amount = self.elastic() + U256::ONE;
-
-        base = muldiv(elastic, total_shares, total_amount)?;
-        if round_up && muldiv(base, total_amount, total_shares)? < elastic {
-            base += U256::ONE;
+        let mut base: U256;
+        if self.elastic() == 0 {
+            base = elastic;
+        } else {
+            base = muldiv(elastic, self.base(), self.elastic())?;
+            if round_up && muldiv(base, self.elastic(), self.base())? < elastic {
+                base += U256::ONE;
+            }
         }
         Ok(base)
     }
@@ -35,16 +33,14 @@ pub trait Rebase {
     /// Calculates the elastic value in relationship to `base` and self
     fn to_elastic(&self, base: impl Into<U256> + Copy, round_up: bool) -> StdResult<U256> {
         let base = base.into();
-        let mut elastic;
-
-        // Use virtual offset approach in YieldBox to enforce a base conversion rate.
-        // Because we want to support at most 18 decimal fixed point math, we set the ratio to 1 : 1e19.
-        let total_shares = self.base() + exp10(19);
-        let total_amount = self.elastic() + U256::ONE;
-
-        elastic = muldiv(base, total_amount, total_shares)?;
-        if round_up && muldiv(elastic, total_shares, total_amount)? < base {
-            elastic += U256::ONE;
+        let mut elastic: U256;
+        if self.base() == 0 {
+            elastic = base;
+        } else {
+            elastic = muldiv(base, self.elastic(), self.base())?;
+            if round_up && muldiv(elastic, self.base(), self.elastic())? < base {
+                elastic += U256::ONE;
+            }
         }
         Ok(elastic)
     }
