@@ -21,8 +21,8 @@ pub trait Rebase {
         let mut base;
 
         // Use virtual offset approach in YieldBox to enforce a base conversion rate.
-        // Because we want to support at most 18 decimal fixed point math, we set the ratio to 1 : 1e18.
-        let total_shares = self.base() + exp10(18);
+        // Because we want to support at most 18 decimal fixed point math, we set the ratio to 1 : 1e19.
+        let total_shares = self.base() + exp10(19);
         let total_amount = self.elastic() + U256::ONE;
 
         base = muldiv(elastic, total_shares, total_amount)?;
@@ -38,8 +38,8 @@ pub trait Rebase {
         let mut elastic;
 
         // Use virtual offset approach in YieldBox to enforce a base conversion rate.
-        // Because we want to support at most 18 decimal fixed point math, we set the ratio to 1 : 1e18.
-        let total_shares = self.base() + exp10(18);
+        // Because we want to support at most 18 decimal fixed point math, we set the ratio to 1 : 1e19.
+        let total_shares = self.base() + exp10(19);
         let total_amount = self.elastic() + U256::ONE;
 
         elastic = muldiv(base, total_amount, total_shares)?;
